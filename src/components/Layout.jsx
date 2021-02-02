@@ -1,8 +1,9 @@
 import React, { useState} from 'react'
-import {  useDispatch, useSelector } from 'react-redux'
+import {  useDispatch } from 'react-redux'
 import {  getSearchMovies, loadingMovies } from '../store/movies/actions'
 import { useHistory } from 'react-router-dom'
-import { Heading, Flex, Input, Link } from "@chakra-ui/core";
+import { useFirebaseApp } from 'reactfire'
+import { Heading, Flex, Input, Link, Button } from "@chakra-ui/core";
 import Stars from '../assets/images/Stars.jpg'
 
 const Layout = ({children}) =>{
@@ -10,6 +11,7 @@ const Layout = ({children}) =>{
     const [searchTerm, setSearchTerm] = useState('')
     const history = useHistory()
     const dispatch = useDispatch()
+    const firebase = useFirebaseApp();
 
     const handleOnSubmit = async (e) => {
       e.preventDefault()
@@ -29,6 +31,11 @@ const Layout = ({children}) =>{
 
     const handleOnChange = (e) =>{
       setSearchTerm(e.target.value)
+    }
+
+    const handleLogOut = async () => {
+      await firebase.auth().signOut()
+      history.replace(`/login`)
     }
     return(
     <Flex
@@ -60,6 +67,11 @@ const Layout = ({children}) =>{
         </Link>
       </Flex>
       <Flex>
+          <Button 
+          bg='black'
+          _focus={{ border:'none' }} 
+          _hover={{background:'white', color:'black' }}
+          onClick={handleLogOut}>Cerrar sesion</Button>
           <form onSubmit={handleOnSubmit}>
             <Input bg='white' 
             placeholder="search..." 
